@@ -1,0 +1,35 @@
+{% extends "notebook/base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <h2>New task</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" name="subject" class="form-control" id="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" class="form-control" id="content" ></textarea>
+                </div>
+                <div class="form-group form-check">
+                    <label for="photos">Photos</label>
+                    <input type="file" name="photos" id="photos" accept="image/*">
+                    <input type="submit">
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

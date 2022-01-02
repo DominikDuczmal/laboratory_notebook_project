@@ -1,0 +1,45 @@
+{% extends 'notebook/base.html' %}
+
+{% csrf_token %}
+{% block content %}
+<h1>Analyst: {{ analyst }}</h1>
+
+<br>
+<br>
+<br>
+
+<h2>Current tasks</h2>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+        {% if current_tasks.count > 0 %}
+            <div class="list-group">
+                {% for task in current_tasks %}
+                    <a href="" class="list-group-item list-group-item-action">
+                        <b>{{ task.subject }}</b>{% if task.content %} - {{ task.content|truncatechars:30 }}{% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        </div>
+    </div>
+
+<br>
+<br>
+<br>
+
+<h2>Completed tasks</h2>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+        {% if completed_tasks.count > 0 %}
+            <div class="list-group">
+                {% for task in completed_tasks %}
+                    <a href="" class="list-group-item list-group-item-action">
+                        <b>{{ task.subject }}</b>{% if task.content %} - {{ task.content|truncatechars:30 }}{% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "notebook/base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <h2>New user form</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="first_name">First name</label>
+                    <input type="text" name="first_name" class="form-control" id="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last name</label>
+                    <input type="text" name="last_name" class="form-control" id="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="text" name="email" class="form-control" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="laboratory">Choose laboratory department</label>
+                    <select id="laboratory" name="laboratory" class="form-control" required>
+                        {% for lab in laboratories %}
+                            <option value="{{ lab.0 }}"> {{ lab.1 }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

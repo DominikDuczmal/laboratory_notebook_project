@@ -1,0 +1,14 @@
+{% extends 'notebook/base.html' %}
+
+{% block content %}
+    <h2> Laboratory Departments:</h2>
+    <ul>
+        {% for laboratory in laboratories %}
+        <li>
+            <a href="{% url 'lab_dep_view' laboratory.0 %}">{{ laboratory.1 }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
+

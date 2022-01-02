@@ -1,0 +1,20 @@
+{% extends "notebook/base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <h1>Completed tasks</h1>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <div class="list-group">
+                {% for task in tasks %}
+                    <a href="{% url 'view_task' task.id %}" class="list-group-item list-group-item-action">
+                        <b>{{ task.subject }}</b> - completed {{ task.date_completed|date:'M j Y H:i' }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

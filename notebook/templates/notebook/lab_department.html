@@ -1,0 +1,22 @@
+{% extends 'notebook/base.html' %}
+
+{% block content %}
+    <br>
+    <h3>Department: {{ laboratory_name }} </h3>
+    <h3>
+        Supervisor: {{ supervisor.0 }}
+            <a href="/analyst/{{ supervisor.id }}/"> {{ supervisor.name }} </a>
+    </h3>
+
+    <h3>Analysts:</h3>
+    <ul>
+        {% for analyst in analysts %}
+            {% if is_supervisor %}
+                <li><a href="{% url 'superior_overview' analyst.user.id %}"> {{ analyst }} </a></li>
+            {% else %}
+                <li> {{ analyst }} </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+{% endblock %}

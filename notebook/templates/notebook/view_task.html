@@ -1,0 +1,49 @@
+{% extends "notebook/base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <h2>New task</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" name="subject" class="form-control" id="subject" value="{{ task.subject }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" class="form-control" id="content"> {{ task.content }} </textarea>
+                </div>
+                <div class="form-group">
+                    <label for="photos">Photos</label>
+                    <input type="file" name="photos" id="photos" value="{{ task.photos }}" accept="image/*">
+                    <input type="submit">
+                    {{ task.photos }}
+                    <br><img src="{{ task.photos }}" alt="No photo uploaded previously">
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-success" onclick="$('#complete').click()">Complete</button>
+                <button type="button" class="btn btn-danger" onclick="$('#delete').click()">Delete</button>
+            </form>
+        </div>
+    </div>
+    {% if task.date_completed is None %}
+        <form style='display: none;' method="POST" action="{% url 'complete_task' task.id %}">
+            {% csrf_token %}
+            <button id="complete" type="submit">Complete</button>
+        </form>
+    {% endif %}
+    <form style='display: none;' method="POST" action="{% url 'delete_task' task.id %}">
+        {% csrf_token %}
+        <button id="delete" type="submit">Delete</button>
+    </form>
+{% endblock %}

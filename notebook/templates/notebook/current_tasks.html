@@ -1,0 +1,33 @@
+{% extends "notebook/base.html" %}
+
+{% block content %}
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            {% if tasks.count > 0 %}
+                <h1>{{ tasks.count }} current task{{ tasks.count|pluralize }}</h1>
+            {% else %}
+                <h1>Current tasks</h1>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+        {% if tasks.count > 0 %}
+            <div class="list-group">
+                {% for task in tasks %}
+                    <a href="{% url 'view_task' task.id %}" class="list-group-item list-group-item-action">
+                        <b>{{ task.subject }}</b>{% if task.content %} - {{ task.content|truncatechars:30 }}{% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center">
+                <h2>No tasks left, create new ones.</h2>
+            <br>
+            <a role="button" class="btn btn-primary" href="{% url 'create_task' %}">New task</a>
+            </div>
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}
