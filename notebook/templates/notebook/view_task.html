@@ -13,7 +13,7 @@
                     {{ error }}
                 </div>
             {% endif %}
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="subject">Subject</label>
@@ -21,14 +21,14 @@
                 </div>
                 <div class="form-group">
                     <label for="content">Content</label>
-                    <textarea name="content" class="form-control" id="content"> {{ task.content }} </textarea>
+                    <textarea name="content" class="form-control" id="content" required> {{ task.content }} </textarea>
                 </div>
                 <div class="form-group">
-                    <label for="photos">Photos</label>
-                    <input type="file" name="photos" id="photos" value="{{ task.photos }}" accept="image/*">
-                    <input type="submit">
-                    {{ task.photos }}
-                    <br><img src="{{ task.photos }}" alt="No photo uploaded previously">
+                    <label for="photos">Choose photo to upload</label>
+                    <input type="file" name="photos" id="photos" accept="image/*">
+
+                    <br>Previously chosen: {{ task.photos }}
+                    <br><img src="{% if task.photos %}{{ task.photos.url }}{% endif %}" width="250" alt="No photo uploaded previously">
                 </div>
                 <button type="submit" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-success" onclick="$('#complete').click()">Complete</button>

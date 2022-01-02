@@ -56,7 +56,7 @@ class Task(models.Model):
     subject = models.CharField(max_length=254, verbose_name='Temat Analizy/Badania')
     content = models.TextField(verbose_name='Notatki z przeprowadzonego eksperymentu')
     analyst_id = models.ForeignKey(Analyst, on_delete=models.CASCADE, verbose_name='Analityk')
-    photos = models.ImageField(upload_to='my_media', null=True, blank=True)
+    photos = models.ImageField(upload_to='my_media/', null=True, blank=True)
     date_sent = models.DateTimeField(auto_now_add=True, verbose_name='Data wysłania')
     date_completed = models.DateTimeField(null=True, blank=True)
 

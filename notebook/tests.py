@@ -1,5 +1,5 @@
 from django.test import TestCase, Client
-from .models import User, Analyst, Supervisor, Task
+from notebook.models import User, Analyst, Supervisor, Task
 from django.db.utils import IntegrityError, DataError
 from django.utils import timezone
 

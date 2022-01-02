@@ -1,4 +1,6 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views import View
@@ -32,19 +34,23 @@ class LaboratoryDepartmentView(View):
         LABORATORIES: a global pre-defined variable with a list of available laboratory departments
         """
 
+        is_allowed = False
+        superuser = User.objects.filter(is_superuser=True, id=request.user.id)
+        if superuser:
+            is_allowed = True
+
         supervisor = Supervisor.objects.filter(laboratory__contains=[laboratory])
         analysts = Analyst.objects.filter(laboratory__contains=[laboratory])
 
-        is_supervisor = False
         if supervisor:
             if request.user == supervisor[0].user:
-                is_supervisor = True
+                is_allowed = True
 
         return render(request, "notebook/lab_department.html", {
             "supervisor": supervisor,
             "analysts": analysts,
             "laboratory_name": LABORATORIES[int(laboratory) - 1][1],
-            "is_supervisor": is_supervisor,
+            "is_supervisor": is_allowed,
         })
 
 
@@ -56,6 +62,10 @@ def get_analyst_form(request):
     The function allows to check whether such record already exists and asks for an Input from the current User.
     New record in Analyst table is added and finally a User is redirected to the page with his Current Tasks.
     """
+
+    superuser = User.objects.filter(is_superuser=True, id=request.user.id)
+    if superuser:
+        return redirect('home')
 
     analyst = Analyst.objects.filter(user=request.user)
     if analyst:
@@ -100,11 +110,16 @@ def superior_overview(request, analyst_pk):
 def create_task(request):
     """Function allows to Create a new Task"""
 
+    superuser = User.objects.filter(is_superuser=True, id=request.user.id)
+    if superuser:
+        msg = '<h2>Page not found - view of the create Task form is available only for logged Analyst</h2>'
+        return HttpResponseNotFound(msg)
+
     if request.method == 'GET':
         return render(request, 'notebook/create_task.html', {'form': TaskForm()})
     else:
         try:
-            form = TaskForm(request.POST)
+            form = TaskForm(request.POST, request.FILES)
             new_task = form.save(commit=False)
 
             analyst = Analyst.objects.filter(user=request.user)
@@ -125,6 +140,12 @@ def create_task(request):
 def view_current_tasks(request):
     """Function with the View on the list of Current Tasks"""
 
+    superuser = User.objects.filter(is_superuser=True, id=request.user.id)
+    if superuser:
+        msg = '<h2>Page not found - view of the current Tasks is available only for logged Analyst</h2>'
+        return HttpResponseNotFound(msg)
+
+
     analyst = Analyst.objects.filter(user=request.user)
     tasks = Task.objects.filter(analyst_id=analyst[0], date_completed__isnull=True)
 
@@ -134,6 +155,11 @@ def view_current_tasks(request):
 @login_required
 def view_completed_tasks(request):
     """Function with the View on the list of Completed Tasks"""
+
+    superuser = User.objects.filter(is_superuser=True, id=request.user.id)
+    if superuser:
+        msg = '<h2>Page not found - view of the completed Tasks is available only for logged Analyst</h2>'
+        return HttpResponseNotFound(msg)
 
     analyst = Analyst.objects.filter(user=request.user)
     tasks = Task.objects.filter(analyst_id=analyst[0], date_completed__isnull=False).order_by('-date_completed')
@@ -147,16 +173,25 @@ def view_task(request, task_pk):
     It allows to change the previously given Input and Save changes.
     """
 
+    superuser = User.objects.filter(is_superuser=True, id=request.user.id)
+    supervisor = Supervisor.objects.filter(user=request.user)
     analyst = Analyst.objects.filter(user=request.user)
-    task = get_object_or_404(Task, pk=task_pk, analyst_id=analyst[0])
+
+    if superuser or supervisor or analyst:
+        task = Task.objects.get(pk=task_pk)
+    else:
+        return HttpResponseNotFound('You are not allowed to see Tasks of other users')
 
     if request.method == 'GET':
         form = TaskForm(instance=task)
         return render(request, 'notebook/view_task.html', {'task': task, 'form': form})
     else:
         try:
-            form = TaskForm(request.POST, instance=task)
+            form = TaskForm(request.POST, request.FILES, instance=task)
             form.save()
+            if superuser or supervisor:
+                analyst_pk = task.analyst_id.user.id
+                return redirect('superior_overview', analyst_pk)
             return redirect('view_current_tasks')
         except ValueError as VE:
             return render(request, 'notebook/view_task.html', {

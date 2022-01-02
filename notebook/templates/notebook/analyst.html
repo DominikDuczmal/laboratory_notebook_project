@@ -14,7 +14,7 @@
         {% if current_tasks.count > 0 %}
             <div class="list-group">
                 {% for task in current_tasks %}
-                    <a href="" class="list-group-item list-group-item-action">
+                    <a href="{% url 'view_task' task.id %}" class="list-group-item list-group-item-action">
                         <b>{{ task.subject }}</b>{% if task.content %} - {{ task.content|truncatechars:30 }}{% endif %}
                     </a>
                 {% endfor %}
@@ -33,7 +33,7 @@
         {% if completed_tasks.count > 0 %}
             <div class="list-group">
                 {% for task in completed_tasks %}
-                    <a href="" class="list-group-item list-group-item-action">
+                    <a href="{% url 'view_task' task.id %}" class="list-group-item list-group-item-action">
                         <b>{{ task.subject }}</b>{% if task.content %} - {{ task.content|truncatechars:30 }}{% endif %}
                     </a>
                 {% endfor %}

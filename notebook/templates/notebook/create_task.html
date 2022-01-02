@@ -13,7 +13,7 @@
                     {{ error }}
                 </div>
             {% endif %}
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="subject">Subject</label>
@@ -21,9 +21,9 @@
                 </div>
                 <div class="form-group">
                     <label for="content">Content</label>
-                    <textarea name="content" class="form-control" id="content" ></textarea>
+                    <textarea name="content" class="form-control" id="content" required></textarea>
                 </div>
-                <div class="form-group form-check">
+                <div class="form-group">
                     <label for="photos">Photos</label>
                     <input type="file" name="photos" id="photos" accept="image/*">
                     <input type="submit">
